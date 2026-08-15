@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - API Forge</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@320;330;340;450;480;540;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --canvas: #ffffff;
+      --surface-soft: #f7f7f5;
+      --hairline: #e5e5e3;
+      --hairline-soft: #f0f0ee;
+
+      /* Color blocks */
+      --block-lime: #d4ff4d;
+      --block-lilac: #d6cdff;
+      --block-mint: #c8f5e1;
+      --block-pink: #ffd6e7;
+
+      --ink: #000000;
+      --success: #00a644;
+      --success-bg: #dcfce7;
+      --danger: #ef4444;
+      --danger-bg: #fee2e2;
+
+      /* Spacing */
+      --space-xs: 8px;
+      --space-sm: 12px;
+      --space-md: 16px;
+      --space-lg: 24px;
+
+      /* Radius */
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 10px;
+      --radius-pill: 50px;
+      --radius-full: 9999px;
+
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', menlo;
+      --text-xs: 12px;
+      --text-sm: 13px;
+      --text-base: 14px;
+    }
+
+    [data-theme="dark"] {
+      --black: #ffffff;
+      --white: #000000;
+      --canvas: #0a0a0a;
+      --surface-soft: #1a1a1a;
+      --hairline: #2a2a2a;
+      --hairline-soft: #1f1f1f;
+      --ink: #ffffff;
+      --success-bg: rgba(0,166,68,0.15);
+      --danger-bg: rgba(239,68,68,0.15);
+      --block-lime: #1a2a00;
+      --block-lilac: #1a1a2e;
+      --block-mint: #1a2e1f;
+      --block-pink: #2e1a2a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      font-weight: 330;
+      line-height: 1.5;
+      color: var(--ink);
+      background: var(--canvas);
+      min-height: 100vh;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .layout {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 200px;
+      background: var(--canvas);
+      border-right: 1px solid var(--hairline);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      left: 0;
+      bottom: 0;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .sidebar-header {
+      padding: var(--space-xs);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .workspace-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-xs);
+      background: var(--block-lilac);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .workspace-card:hover {
+      opacity: 0.9;
+    }
+
+    .workspace-card-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--black);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .workspace-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .workspace-card-name {
+      font-size: var(--text-sm);
+      font-weight: 540;
+    }
+
+    .workspace-card-meta {
+      font-size: 10px;
+      font-weight: 330;
+      opacity: 0.6;
+    }
+
+    .workspace-card-arrow {
+      font-size: var(--text-sm);
+      opacity: 0.5;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: var(--space-sm) var(--space-xs);
+      overflow-y: auto;
+    }
+
+    .nav-section {
+      margin-bottom: var(--space-xs);
+    }
+
+    .nav-section-title {
+      font-size: var(--text-xs);
+      font-weight: 400;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink);
+      opacity: 0.35;
+      padding: 6px var(--space-xs);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px var(--space-xs);
+      border-radius: var(--radius-sm);
+      color: var(--ink);
+      font-size: var(--text-sm);
+      font-weight: 330;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-item:hover {
+      background: var(--surface-soft);
+    }
+
+    .nav-item.active {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .nav-item svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    .nav-item.active svg {
+      opacity: 1;
+    }
+
+    .nav-item .badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 2px 5px;
+      border-radius: var(--radius-pill);
+      background: var(--surface-soft);
+      opacity: 0.5;
+    }
+
+    .nav-item.active .badge {
+      background: rgba(255,255,255,0.2);
+      opacity: 1;
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      margin-left: 200px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Header */
+    .header {
+      height: 48px;
+      background: var(--canvas);
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-md);
+      gap: var(--space-sm);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-logo-mark {
+      width: 26px;
+      height: 26px;
+      background: var(--black);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-logo-mark svg {
+      width: 14px;
+      height: 14px;
+      color: var(--white);
+    }
+
+    .header-logo-text {
+      font-size: var(--text-sm);
+      font-weight: 700;
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--hairline);
+    }
+
+    .search {
+      flex: 1;
+      max-width: 320px;
+      position: relative;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 6px 10px 6px 30px;
+      font-family: var(--font-sans);
+      font-size: var(--text-xs);
+      font-weight: 330;
+      color: var(--ink);
+      background: var(--surface-soft);
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: all 0.15s;
+    }
+
+    .search input::placeholder {
+      opacity: 0.4;
+    }
+
+    .search input:focus {
+      border-color: var(--black);
+    }
+
+    .search svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      opacity: 0.4;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: auto;
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      opacity: 0.5;
+    }
+
+    .icon-btn:hover {
+      background: var(--surface-soft);
+      opacity: 1;
+    }
+
+    .icon-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .user-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: var(--radius-sm);
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    /* Content */
+    .content {
+      flex: 1;
+      padding: var(--space-md);
+    }
+
+    .page-header {
+      margin-bottom: var(--space-md);
+    }
+
+    .page-title {
+      font-size: var(--text-base);
+      font-weight: 540;
+      margin-bottom: 2px;
+    }
+
+    .page-subtitle {
+      font-size: var(--text-xs);
+      font-weight: 330;
+      opacity: 0.5;
+    }
+
+    /* Quick Actions - Mint section */
+    .quick-actions {
+      background: var(--block-mint);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      margin-bottom: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .quick-actions-title {
+      font-size: var(--text-sm);
+      font-weight: 540;
+      margin-bottom: 2px;
+    }
+
+    .quick-actions-sub {
+      font-size: var(--text-xs);
+      font-weight: 330;
+      opacity: 0.6;
+    }
+
+    .quick-actions-list {
+      display: flex;
+      gap: var(--space-xs);
+      margin-left: auto;
+    }
+
+    .quick-action {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      background: rgba(0,0,0,0.06);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s;
+      font-size: var(--text-xs);
+      font-weight: 450;
+    }
+
+    .quick-action:hover {
+      background: rgba(0,0,0,0.1);
+      transform: translateY(-1px);
+    }
+
+    .quick-action svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    /* Dashboard grid - 2 columns balanced */
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+
+    /* Card */
+    .card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-lg);
+      transition: all 0.2s;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) var(--space-sm);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .card-title {
+      font-size: var(--text-sm);
+      font-weight: 540;
+    }
+
+    .card-action {
+      font-size: var(--text-xs);
+      font-weight: 480;
+      color: var(--ink);
+      text-decoration: none;
+      opacity: 0.5;
+      cursor: pointer;
+    }
+
+    .card-action:hover {
+      opacity: 1;
+      text-decoration: underline;
+    }
+
+    .card-body {
+      padding: var(--space-sm);
+    }
+
+    /* Requests */
+    .request-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--hairline-soft);
+    }
+
+    .request-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .request-item:first-child {
+      padding-top: 0;
+    }
+
+    .method {
+      font-size: 9px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 2px 5px;
+      border-radius: 3px;
+      min-width: 38px;
+      text-align: center;
+    }
+
+    .method.get { background: var(--success-bg); color: var(--success); }
+    .method.post { background: #fef3c7; color: #b45309; }
+    .method.put { background: #dbeafe; color: #1d4ed8; }
+    .method.delete { background: var(--danger-bg); color: var(--danger); }
+    .method.patch { background: #ede9fe; color: #7c3aed; }
+
+    .request-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .request-url {
+      font-size: var(--text-xs);
+      font-family: var(--font-mono);
+      font-weight: 400;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .request-meta {
+      font-size: 10px;
+      font-weight: 330;
+      opacity: 0.4;
+      margin-top: 1px;
+    }
+
+    .request-status {
+      font-size: var(--text-xs);
+      font-weight: 540;
+    }
+
+    .request-status.success { color: var(--success); }
+    .request-status.error { color: var(--danger); }
+
+    /* Collections */
+    .collection-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--hairline-soft);
+    }
+
+    .collection-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .collection-item:first-child {
+      padding-top: 0;
+    }
+
+    .collection-icon {
+      width: 26px;
+      height: 26px;
+      background: var(--block-lilac);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .collection-icon svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0.6;
+    }
+
+    .collection-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .collection-name {
+      font-size: var(--text-xs);
+      font-weight: 540;
+    }
+
+    .collection-meta {
+      font-size: 10px;
+      font-weight: 330;
+      opacity: 0.4;
+    }
+
+    /* Activity */
+    .activity-item {
+      display: flex;
+      gap: var(--space-xs);
+      padding: 6px 0;
+      border-bottom: 1px solid var(--hairline-soft);
+    }
+
+    .activity-item:last-child {
+      border-bottom: none;
+      padding-bottom: 0;
+    }
+
+    .activity-item:first-child {
+      padding-top: 0;
+    }
+
+    .activity-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: var(--radius-full);
+      margin-top: 5px;
+      flex-shrink: 0;
+    }
+
+    .activity-dot.create { background: var(--success); }
+    .activity-dot.update { background: #3b82f6; }
+    .activity-dot.delete { background: var(--danger); }
+
+    .activity-content {
+      flex: 1;
+    }
+
+    .activity-text {
+      font-size: var(--text-xs);
+      font-weight: 330;
+      line-height: 1.4;
+    }
+
+    .activity-text strong {
+      font-weight: 540;
+    }
+
+    .activity-time {
+      font-size: 10px;
+      font-weight: 330;
+      opacity: 0.4;
+      margin-top: 1px;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .dashboard-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .quick-actions {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .quick-actions-list {
+        margin-left: 0;
+        margin-top: var(--space-sm);
+        flex-wrap: wrap;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .main {
+        margin-left: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="workspace-card">
+          <div class="workspace-card-avatar">AC</div>
+          <div class="workspace-card-info">
+            <div class="workspace-card-name">Acme Corp</div>
+            <div class="workspace-card-meta">8 members · Admin</div>
+          </div>
+          <div class="workspace-card-arrow">›</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Menu</div>
+          <div class="nav-item active">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Dashboard
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            Search
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Workspace</div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            API Builder
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+            </svg>
+            Collections
+            <span class="badge">12</span>
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+            </svg>
+            Environments
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Testing</div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+            Test Suites
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Flows
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Team</div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Members
+          </div>
+        </div>
+      </nav>
+
+    </aside>
+
+    <!-- Main -->
+    <main class="main">
+      <header class="header">
+        <div class="header-logo">
+          <div class="header-logo-mark">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+          </div>
+          <span class="header-logo-text">API Forge</span>
+        </div>
+        <div class="header-divider"></div>
+        <div class="search">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" placeholder="Search...">
+        </div>
+
+        <div class="header-actions">
+          <button class="icon-btn" title="Notifications">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+            </svg>
+          </button>
+          <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme">
+            <svg class="icon-sun" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/>
+            </svg>
+            <svg class="icon-moon" fill="none" stroke="currentColor" viewBox="0 0 24 24" style="display:none">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+          </button>
+          <div class="user-avatar">JD</div>
+        </div>
+      </header>
+
+      <div class="content">
+        <div class="page-header">
+          <h1 class="page-title">Good morning, John</h1>
+          <p class="page-subtitle">Here's what's happening with your APIs.</p>
+        </div>
+
+        <!-- Quick Actions - Mint section -->
+        <div class="quick-actions">
+          <div>
+            <div class="quick-actions-title">Quick Actions</div>
+            <div class="quick-actions-sub">Start a new project</div>
+          </div>
+          <div class="quick-actions-list">
+            <div class="quick-action">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+              </svg>
+              New Request
+            </div>
+            <div class="quick-action">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+              </svg>
+              New Collection
+            </div>
+            <div class="quick-action">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/>
+              </svg>
+              Import
+            </div>
+            <div class="quick-action">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+              </svg>
+              Run Tests
+            </div>
+          </div>
+        </div>
+
+        <!-- Dashboard grid - 2 columns balanced -->
+        <div class="dashboard-grid">
+          <!-- Left: Collections -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Collections</h3>
+              <span class="card-action">Manage</span>
+            </div>
+            <div class="card-body">
+              <div class="collection-item">
+                <div class="collection-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                  </svg>
+                </div>
+                <div class="collection-info">
+                  <div class="collection-name">User Authentication</div>
+                  <div class="collection-meta">8 endpoints · 2h ago</div>
+                </div>
+              </div>
+              <div class="collection-item">
+                <div class="collection-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                  </svg>
+                </div>
+                <div class="collection-info">
+                  <div class="collection-name">Product Catalog</div>
+                  <div class="collection-meta">24 endpoints · yesterday</div>
+                </div>
+              </div>
+              <div class="collection-item">
+                <div class="collection-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                  </svg>
+                </div>
+                <div class="collection-info">
+                  <div class="collection-name">Payment Gateway</div>
+                  <div class="collection-meta">12 endpoints · 3d ago</div>
+                </div>
+              </div>
+              <div class="collection-item">
+                <div class="collection-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+                  </svg>
+                </div>
+                <div class="collection-info">
+                  <div class="collection-name">Analytics API</div>
+                  <div class="collection-meta">16 endpoints · 1w ago</div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Recent Requests -->
+          <div class="card">
+            <div class="card-header">
+              <h3 class="card-title">Recent Requests</h3>
+              <span class="card-action">View All</span>
+            </div>
+            <div class="card-body">
+              <div class="request-item">
+                <span class="method get">GET</span>
+                <div class="request-info">
+                  <div class="request-url">/api/v1/users/profile</div>
+                  <div class="request-meta">2 min ago · Production</div>
+                </div>
+                <span class="request-status success">200</span>
+              </div>
+              <div class="request-item">
+                <span class="method post">POST</span>
+                <div class="request-info">
+                  <div class="request-url">/api/v1/auth/login</div>
+                  <div class="request-meta">5 min ago · Dev</div>
+                </div>
+                <span class="request-status success">200</span>
+              </div>
+              <div class="request-item">
+                <span class="method put">PUT</span>
+                <div class="request-info">
+                  <div class="request-url">/api/v1/workspace/settings</div>
+                  <div class="request-meta">12 min ago · Production</div>
+                </div>
+                <span class="request-status success">200</span>
+              </div>
+              <div class="request-item">
+                <span class="method get">GET</span>
+                <div class="request-info">
+                  <div class="request-url">/api/v1/collections</div>
+                  <div class="request-meta">23 min ago · Staging</div>
+                </div>
+                <span class="request-status error">404</span>
+              </div>
+              <div class="request-item">
+                <span class="method delete">DELETE</span>
+                <div class="request-info">
+                  <div class="request-url">/api/v1/temp/export</div>
+                  <div class="request-meta">1h ago · Dev</div>
+                </div>
+                <span class="request-status success">204</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const html = document.documentElement;
+      const sun = document.querySelectorAll('.icon-sun');
+      const moon = document.querySelectorAll('.icon-moon');
+
+      if (html.getAttribute('data-theme') === 'dark') {
+        html.removeAttribute('data-theme');
+        sun.forEach(s => s.style.display = 'block');
+        moon.forEach(m => m.style.display = 'none');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+        sun.forEach(s => s.style.display = 'none');
+        moon.forEach(m => m.style.display = 'block');
+      }
+    }
+  </script>
+</body>
+</html>
