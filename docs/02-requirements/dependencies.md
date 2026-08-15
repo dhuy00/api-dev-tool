@@ -3,7 +3,7 @@
 ## Internal Dependencies
 
 - User account and session service.
-- Workspace and project metadata service.
+- Workspace metadata service.
 - Request execution service.
 - Request history and snapshot store.
 - Environment and variable resolvers.

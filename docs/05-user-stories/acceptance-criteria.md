@@ -3,7 +3,7 @@
 ## Core Acceptance Criteria
 
 1. The user can create and verify an account.
-2. The user can create a workspace and project.
+2. The user can create a workspace.
 3. The user can author and execute an HTTP request.
 4. The user can inspect response headers, body, and time metadata.
 5. The user can generate privacy-safe synthetic payload data.

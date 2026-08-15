@@ -19,7 +19,7 @@ Title:
 Request editor open latency
 
 Description:
-Opening a saved request in the editor shall complete within 1 second for a project containing up to 500 requests and 50 environment variables.
+Opening a saved request in the editor shall complete within 1 second for a workspace containing up to 500 requests and 50 environment variables.
 
 Priority:
 Must Have
@@ -30,7 +30,7 @@ Title:
 Request save latency
 
 Description:
-Saving a request update shall complete within 2 seconds for a project containing up to 200 active requests in the same collection.
+Saving a request update shall complete within 2 seconds for a collection containing up to 200 active requests.
 
 Priority:
 Must Have

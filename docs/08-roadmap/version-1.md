@@ -11,7 +11,6 @@
 ## Planned Features
 
 - Team workspace and team role management.
-- Project sharing and permission policy.
 - AI-assisted payload generation.
 - AI-assisted test generation.
 - Test suite execution and comparison.

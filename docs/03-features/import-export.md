@@ -13,7 +13,7 @@ The import/export module helps teams bring existing API artifacts into the platf
 - cURL
 - HAR
 - Environment files
-- Native project backup
+- Native workspace backup
 
 ## Import Requirements
 
@@ -28,7 +28,7 @@ The import/export module helps teams bring existing API artifacts into the platf
 
 ## Export Requirements
 
-- Export native project format.
+- Export native workspace format.
 - Export with or without secrets.
 - Warn before exporting sensitive data.
 

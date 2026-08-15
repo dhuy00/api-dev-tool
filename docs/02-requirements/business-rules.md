@@ -122,7 +122,7 @@ Title:
 Soft delete policy
 
 Description:
-Deleted workspaces, projects, requests, collections, and performance resources shall be retained in a soft-delete state during the retention window before permanent purge.
+Deleted workspaces, requests, collections, and performance resources shall be retained in a soft-delete state during the retention window before permanent purge.
 
 Priority:
 Must Have

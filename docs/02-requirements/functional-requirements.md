@@ -162,10 +162,10 @@ Exception Flows:
 - Workspace deletion blocked due to active resources.
 
 Postconditions:
-- The workspace becomes available for project creation.
+- The workspace becomes available for collection and asset creation.
 
 Business Rules:
-- A user must own at least one workspace to keep projects.
+- A user must own at least one workspace to keep assets.
 
 Priority:
 Must Have
@@ -177,55 +177,6 @@ Acceptance Criteria:
 Given a signed-in user,
 When the user creates a workspace,
 Then the workspace must be created with the user as the owner.
-
-### FR-PRJ-001
-
-Title:
-Create, edit, archive, and duplicate project
-
-Description:
-The system shall support project-level organization of requests, environments, collections, test suites, documentation, and flow assets.
-
-Actors:
-Authenticated user, workspace owner, workspace admin
-
-Preconditions:
-- The user is a member of the workspace.
-- The workspace allows project management.
-
-Trigger:
-The user creates or changes a project.
-
-Main Flow:
-1. The user selects a workspace.
-2. The user creates a project with a name and description.
-3. The system creates the project record.
-4. The project becomes available for collections, requests, and environments.
-
-Alternative Flows:
-- The user duplicates a project as a new project.
-- The user archives a project for later recovery.
-
-Exception Flows:
-- Duplicate project name in the same workspace.
-- Project deletion blocked by active references.
-
-Postconditions:
-- The project contains initialized collections and metadata.
-
-Business Rules:
-- Project ownership and membership are scoped to the workspace.
-
-Priority:
-Must Have
-
-Dependencies:
-- Workspace membership
-
-Acceptance Criteria:
-Given a workspace member with project creation permission,
-When the user creates a project,
-Then the system must store the project under the workspace and make it editable according to permissions.
 
 ### FR-REQ-001
 
@@ -239,7 +190,7 @@ Actors:
 Authenticated user
 
 Preconditions:
-- The user has access to a project.
+- The user has access to a workspace.
 - The request editor is open.
 
 Trigger:
@@ -293,7 +244,7 @@ Actors:
 Authenticated user
 
 Preconditions:
-- The user has access to the project.
+- The user has access to a workspace.
 - A request with a JSON payload is open.
 
 Trigger:
@@ -352,7 +303,7 @@ Actors:
 Authenticated user, system
 
 Preconditions:
-- The user has access to the project.
+- The user has access to a workspace.
 - A request and optional schema or response example exist.
 
 Trigger:
@@ -405,7 +356,7 @@ Actors:
 Authenticated user, performance worker
 
 Preconditions:
-- The user has access to the project.
+- The user has access to a workspace.
 - The request target is valid.
 - Workspace capacity and limits are configured.
 
@@ -507,7 +458,7 @@ Actors:
 Authenticated user, system
 
 Preconditions:
-- The user has access to a project.
+- The user has access to a workspace.
 - Requests and examples exist.
 
 Trigger:
@@ -559,7 +510,7 @@ Actors:
 Authenticated user, flow execution engine
 
 Preconditions:
-- The user has access to a project.
+- The user has access to a workspace.
 - A flow can be created from existing requests.
 
 Trigger:

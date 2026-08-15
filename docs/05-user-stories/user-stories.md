@@ -124,7 +124,7 @@ Dependencies:
 - Request metadata service
 
 Acceptance Criteria:
-Given a project with requests and examples,
+Given a workspace with requests and examples,
 When the user requests documentation generation,
 Then the system must create a draft documentation site with request and response sections.
 

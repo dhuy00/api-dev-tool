@@ -3,8 +3,7 @@
 ## Terms
 
 - API Forge: The product described in this documentation set.
-- Workspace: A scoped environment for a user or team to organize projects and assets.
-- Project: A logical grouping of requests, collections, environments, test suites, and documentation.
+- Workspace: A scoped environment for a user or team to organize collections, environments, and shared assets.
 - Collection: A container used to organize requests and folders.
 - Request Flow: A visual orchestration of API request nodes and control logic.
 - Environment: A named set of variables used during request execution.

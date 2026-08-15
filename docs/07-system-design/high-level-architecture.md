@@ -13,7 +13,7 @@ API Forge should follow a modular service-oriented architecture with a web front
 ### Application Layer
 
 - Identity and access control.
-- Workspace and project management.
+- Workspace management.
 - Request management.
 - Documentation orchestration.
 - Flow orchestration.

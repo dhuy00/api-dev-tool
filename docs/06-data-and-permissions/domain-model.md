@@ -12,8 +12,6 @@ This domain model identifies the main business objects that anchor the API Forge
 - Workspace
 - WorkspaceMember
 - Invitation
-- Project
-- ProjectMember
 - Collection
 - Folder
 - Request
@@ -48,8 +46,7 @@ This domain model identifies the main business objects that anchor the API Forge
 ## Relationships
 
 - A User has many Sessions and OAuthAccounts.
-- A Workspace has many WorkspaceMembers and many Projects.
-- A Project owns Collections, Requests, Environments, TestSuites, Flows, and Documentation assets.
+- A Workspace has many WorkspaceMembers and owns Collections, Requests, Environments, TestSuites, Flows, and Documentation assets directly.
 - A Request has many RequestVersions and RequestExamples.
 - A RequestExecution belongs to a Request and references a ResponseSnapshot.
 - A TestSuite owns TestCases and TestRuns.
@@ -59,7 +56,7 @@ This domain model identifies the main business objects that anchor the API Forge
 
 ## Ownership and Lifecycle
 
-Each entity should support ownership by a workspace or project, soft-delete semantics, and activity audit metadata.
+Each entity should support ownership by a workspace, soft-delete semantics, and activity audit metadata.
 
 ## Sensitive Field Notes
 

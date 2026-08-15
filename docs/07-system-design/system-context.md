@@ -19,7 +19,7 @@ API Forge operates as a multi-user API development platform that integrates requ
 The product boundary includes:
 
 - Web client for request composition and viewing.
-- Application services for authentication, workspace logic, and project management.
+- Application services for authentication and workspace logic.
 - Execution services for HTTP and background jobs.
 - Metrics ingestion and dashboarding.
 - Documentation generation pipeline.

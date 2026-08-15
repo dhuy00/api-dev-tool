@@ -20,7 +20,6 @@ The collaboration module supports shared access to API artifacts and activity aw
 - Failed scheduled test.
 - Performance regression.
 - Documentation updated.
-- Project access changed.
 
 ## MVP Positioning
 

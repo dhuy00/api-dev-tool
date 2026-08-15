@@ -8,7 +8,7 @@ This document defines retention guidance for user-generated, execution, and deri
 
 ### User Content
 
-- Projects, collections, requests, environments, and flows: retained until deleted or archived.
+- Collections, requests, environments, and flows: retained until deleted or archived.
 - Comments and activity history: retained according to workspace governance settings.
 
 ### Execution History
@@ -18,7 +18,7 @@ This document defines retention guidance for user-generated, execution, and deri
 
 ### Documentation
 
-- Draft documentation: retained during the project lifecycle.
+- Draft documentation: retained during the workspace lifecycle.
 - Published documentation: retained until superseded or removed by administrative action.
 
 ### Secrets and Tokens

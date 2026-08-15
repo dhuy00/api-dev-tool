@@ -6,7 +6,6 @@
 
 - Authentication.
 - Personal workspace.
-- Project management.
 - REST request builder.
 - Collections and folders.
 - Environments and variables.
@@ -23,7 +22,6 @@
 - Rule-based and AI-assisted test generation.
 - Basic test execution.
 - Performance dashboard.
-- Project sharing.
 - OpenAPI/Postman import-export.
 
 ### Could Have

@@ -11,8 +11,7 @@ The default precedence for variable lookup shall be:
 1. Request variables
 2. Collection variables
 3. Environment variables
-4. Project variables
-5. Workspace variables
+4. Workspace variables
 6. Global variables
 7. Runtime-generated variables
 

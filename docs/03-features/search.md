@@ -17,7 +17,6 @@ Search is a cross-asset discovery feature used to locate requests, documentation
 ## Search Scope
 
 - Workspace
-- Project
 - Collection
 - Folder
 - Request
@@ -30,4 +29,4 @@ Search is a cross-asset discovery feature used to locate requests, documentation
 
 ## MVP Positioning
 
-The MVP should support workspace-level and project-level search with quick filtering and result highlighting.
+The MVP should support workspace-level search with quick filtering and result highlighting.

@@ -8,7 +8,6 @@ Environment and variables are a core abstraction for making requests portable, r
 
 - Global variables
 - Workspace variables
-- Project variables
 - Environment variables
 - Collection variables
 - Request variables

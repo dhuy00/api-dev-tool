@@ -28,7 +28,6 @@ The documentation set is organized to support product discovery, stakeholder ali
 - 03-features
   - [authentication.md](03-features/authentication.md)
   - [workspace-and-team.md](03-features/workspace-and-team.md)
-  - [project-management.md](03-features/project-management.md)
   - [request-builder.md](03-features/request-builder.md)
   - [collections.md](03-features/collections.md)
   - [environments-and-variables.md](03-features/environments-and-variables.md)

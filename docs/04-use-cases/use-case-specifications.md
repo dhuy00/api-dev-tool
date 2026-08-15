@@ -34,29 +34,7 @@ Allow a new user to create an account and verify their identity.
 
 - Verification link is expired or invalid.
 
-## UC-002: Create Project
-
-### Goal
-
-Create a new API project in a workspace.
-
-### Actors
-
-- Workspace owner or admin
-- System
-
-### Preconditions
-
-- The user has workspace access.
-
-### Main Flow
-
-1. The user opens the workspace.
-2. The user selects Create Project.
-3. The system stores the project record.
-4. The user can add collections, requests, and environments.
-
-## UC-003: Send HTTP Request
+## UC-002: Send HTTP Request
 
 ### Goal
 
@@ -69,7 +47,7 @@ Execute a request and inspect its result.
 
 ### Preconditions
 
-- The user has access to the project.
+- The user has access to the workspace.
 
 ### Main Flow
 
@@ -133,7 +111,7 @@ Evaluate API performance for a target request.
 
 ### Preconditions
 
-- The user has access to a project and a configurable request.
+- The user has access to a workspace and a configurable request.
 
 ### Main Flow
 

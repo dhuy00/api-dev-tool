@@ -2,7 +2,7 @@
 
 ## Journey 1: Create and Validate a Request
 
-1. The user opens a project.
+1. The user opens a workspace.
 2. The user creates or selects a request.
 3. The user configures method, URL, headers, and body.
 4. The user executes the request.
@@ -27,7 +27,7 @@
 
 ## Journey 4: Publish Documentation
 
-1. The user selects a collection or project.
+1. The user selects a collection.
 2. The system generates documentation sections.
 3. The user applies manual edits where needed.
 4. The user publishes or drafts the documentation site.

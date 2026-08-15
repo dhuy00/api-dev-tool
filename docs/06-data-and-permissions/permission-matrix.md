@@ -13,7 +13,6 @@
 | --- | --- | --- | --- | --- |
 | Workspace | View, Create, Edit, Delete, Manage Permissions | View, Create, Edit, Delete, Manage Permissions | View, Create, Edit | View |
 | Member | View, Edit, Delete, Manage Permissions | View, Edit, Delete, Manage Permissions | View | View |
-| Project | View, Create, Edit, Delete, Share, Export | View, Create, Edit, Delete, Share, Export | View, Create, Edit, Share, Export | View |
 | Collection | View, Create, Edit, Delete, Share, Export | View, Create, Edit, Delete, Share, Export | View, Create, Edit, Share, Export | View |
 | Request | View, Create, Edit, Delete, Execute, Share | View, Create, Edit, Delete, Execute, Share | View, Create, Edit, Execute | View, Execute |
 | Environment | View, Create, Edit, Delete, Export | View, Create, Edit, Delete, Export | View, Create, Edit | View |
@@ -30,9 +29,9 @@ The following actions should require an explicit confirmation step or re-authent
 
 - Delete workspace.
 - Transfer ownership.
-- Remove member with active project access.
+- Remove member with active workspace access.
 - View or edit secrets.
-- Export documentation or project backup containing secrets.
+- Export documentation or workspace backup containing secrets.
 - Publish documentation with sensitive examples.
 - Run performance scenarios that exceed safe default limits.
 

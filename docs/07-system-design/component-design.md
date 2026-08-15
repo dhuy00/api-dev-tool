@@ -8,11 +8,7 @@ Responsible for registration, login, session issuance, password reset, OAuth int
 
 ### Workspace Component
 
-Responsible for workspace creation, ownership assignment, membership management, and team-level governance.
-
-### Project Component
-
-Responsible for project lifecycle, project metadata, and shared resource boundaries.
+Responsible for workspace creation, ownership assignment, membership management, and team-level governance, including direct ownership of collections, environments, and shared assets.
 
 ### Request Builder Component
 

@@ -28,7 +28,7 @@ Sensitive fields:
 ## Workspace
 
 Purpose:
-A collaboration boundary for projects, collections, environments, and shared assets.
+A collaboration boundary for collections, environments, and shared assets.
 
 Key fields:
 - id
@@ -38,22 +38,7 @@ Key fields:
 - status
 
 Relationships:
-- One-to-many with Project, WorkspaceMember, Invitation
-
-## Project
-
-Purpose:
-A scoped logical unit of API work within a workspace.
-
-Key fields:
-- id
-- name
-- description
-- workspaceId
-- status
-
-Relationships:
-- One-to-many with Collection, Request, Environment, TestSuite, DocumentationSite, RequestFlow
+- One-to-many with Collection, WorkspaceMember, Invitation
 
 ## Request
 
@@ -98,7 +83,7 @@ A named configuration set used to resolve request variables.
 Key fields:
 - id
 - name
-- projectId
+- workspaceId
 - isDefault
 
 Relationships:
@@ -117,7 +102,7 @@ Key fields:
 - isSecret
 
 Relationships:
-- Many-to-one with Environment, Project, Workspace, Collection, Request
+- Many-to-one with Environment, Workspace, Collection, Request
 
 ## Secret
 
@@ -131,12 +116,12 @@ Key fields:
 - maskedLabel
 
 Relationships:
-- Many-to-one with Workspace or Project
+- Many-to-one with Workspace
 
 ## DocumentationSite
 
 Purpose:
-A versionable documentation artifact for a project or collection.
+A versionable documentation artifact for a collection.
 
 Key fields:
 - id

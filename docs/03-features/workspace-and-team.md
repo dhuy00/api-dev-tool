@@ -10,7 +10,6 @@ The workspace module provides governance for personal and team assets.
 - Team workspace creation and management.
 - Workspace invitation and role assignment.
 - Workspace ownership transfer.
-- Project-level membership and permissions.
 
 ## Roles
 

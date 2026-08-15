@@ -8,7 +8,6 @@ The MVP should prove the platform’s core differentiators with a clean, portfol
 
 - Authentication.
 - Personal workspace.
-- Basic project management.
 - REST API request builder.
 - Collections and folders.
 - Environments and variables.

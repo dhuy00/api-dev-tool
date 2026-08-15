@@ -1,0 +1,124 @@
+/* ============================================
+   API Forge - Design System Variables
+   ============================================ */
+
+:root {
+  /* Colors - Dark Mode (default) */
+  --bg-base: #0f1117;
+  --bg-surface: #161822;
+  --bg-elevated: #1e2130;
+  --bg-overlay: #262a3d;
+
+  --border-subtle: #2a2f45;
+  --border-default: #363c54;
+  --border-strong: #4a5273;
+
+  --text-primary: #f0f2f8;
+  --text-secondary: #8b92a9;
+  --text-muted: #565d7a;
+  --text-disabled: #3d4260;
+
+  --accent: #6366f1;
+  --accent-hover: #818cf8;
+  --accent-muted: rgba(99, 102, 241, 0.15);
+
+  --success: #34d399;
+  --success-muted: rgba(52, 211, 153, 0.15);
+  --warning: #fbbf24;
+  --warning-muted: rgba(251, 191, 36, 0.15);
+  --danger: #f87171;
+  --danger-muted: rgba(248, 113, 113, 0.15);
+
+  /* Method colors */
+  --method-get: #34d399;
+  --method-post: #fbbf24;
+  --method-put: #60a5fa;
+  --method-patch: #a78bfa;
+  --method-delete: #f87171;
+  --method-head: #8b92a9;
+  --method-options: #8b92a9;
+
+  /* Spacing */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-10: 40px;
+  --space-12: 48px;
+
+  /* Typography */
+  --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace;
+
+  --text-xs: 11px;
+  --text-sm: 13px;
+  --text-base: 14px;
+  --text-md: 15px;
+  --text-lg: 16px;
+  --text-xl: 18px;
+  --text-2xl: 20px;
+  --text-3xl: 24px;
+
+  --line-height-tight: 1.25;
+  --line-height-base: 1.5;
+  --line-height-relaxed: 1.75;
+
+  /* Layout */
+  --sidebar-width: 240px;
+  --sidebar-collapsed: 60px;
+  --header-height: 52px;
+  --panel-width: 320px;
+
+  /* Border radius */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+  --radius-xl: 12px;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.5);
+  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.6);
+
+  /* Transitions */
+  --transition-fast: 100ms ease;
+  --transition-base: 150ms ease;
+  --transition-slow: 250ms ease;
+
+  /* Z-index layers */
+  --z-base: 0;
+  --z-dropdown: 100;
+  --z-sticky: 200;
+  --z-modal: 300;
+  --z-toast: 400;
+}
+
+/* Light mode */
+:root[data-theme="light"] {
+  --bg-base: #f8f9fc;
+  --bg-surface: #ffffff;
+  --bg-elevated: #f1f3f8;
+  --bg-overlay: #e8ecf4;
+
+  --border-subtle: #e2e6ef;
+  --border-default: #d1d7e3;
+  --border-strong: #b0b9cc;
+
+  --text-primary: #111827;
+  --text-secondary: #5a6379;
+  --text-muted: #8b92a9;
+  --text-disabled: #b8bfce;
+
+  --accent: #4f46e5;
+  --accent-hover: #6366f1;
+  --accent-muted: rgba(79, 70, 229, 0.1);
+
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.07);
+  --shadow-lg: 0 8px 16px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 16px 32px rgba(0, 0, 0, 0.12);
+}
