@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Documentation - API Forge</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@320;330;340;450;480;540;700&family=JetBrains+Mono:wght@400;500&display=swap">
+  <style>
+    :root {
+      --black: #000000;
+      --white: #ffffff;
+      --canvas: #ffffff;
+      --surface-soft: #f7f7f5;
+      --hairline: #e5e5e3;
+      --hairline-soft: #f0f0ee;
+
+      /* Color blocks */
+      --block-lime: #d4ff4d;
+      --block-lilac: #d6cdff;
+      --block-mint: #c8f5e1;
+      --block-pink: #ffd6e7;
+      --block-coral: #ffd4b8;
+      --block-cream: #fef9e7;
+
+      --ink: #000000;
+      --success: #00a644;
+      --success-bg: #dcfce7;
+      --danger: #ef4444;
+      --danger-bg: #fee2e2;
+      --warning: #f59e0b;
+      --warning-bg: #fef3c7;
+      --info: #3b82f6;
+      --info-bg: #dbeafe;
+
+      /* Spacing */
+      --space-xs: 8px;
+      --space-sm: 12px;
+      --space-md: 16px;
+      --space-lg: 24px;
+      --space-xl: 32px;
+
+      /* Radius */
+      --radius-sm: 4px;
+      --radius-md: 6px;
+      --radius-lg: 10px;
+      --radius-pill: 50px;
+      --radius-full: 9999px;
+
+      /* Typography */
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --font-mono: 'JetBrains Mono', 'SF Mono', menlo;
+      --text-xs: 12px;
+      --text-sm: 13px;
+      --text-base: 14px;
+    }
+
+    [data-theme="dark"] {
+      --black: #ffffff;
+      --white: #000000;
+      --canvas: #0a0a0a;
+      --surface-soft: #1a1a1a;
+      --hairline: #2a2a2a;
+      --hairline-soft: #1f1f1f;
+      --ink: #ffffff;
+      --success-bg: rgba(0,166,68,0.15);
+      --danger-bg: rgba(239,68,68,0.15);
+      --warning-bg: rgba(245,158,11,0.15);
+      --info-bg: rgba(59,130,246,0.15);
+      --block-lime: #1a2a00;
+      --block-lilac: #1a1a2e;
+      --block-mint: #1a2e1f;
+      --block-pink: #2e1a2a;
+      --block-coral: #2e1f1a;
+      --block-cream: #2e2a1a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: var(--font-sans);
+      font-size: var(--text-base);
+      font-weight: 330;
+      line-height: 1.5;
+      color: var(--ink);
+      background: var(--canvas);
+      min-height: 100vh;
+      transition: background 0.2s, color 0.2s;
+    }
+
+    .layout {
+      display: flex;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--canvas);
+      border-right: 1px solid var(--hairline);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .sidebar-header {
+      padding: var(--space-xs);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .workspace-card {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      padding: var(--space-xs);
+      background: var(--block-lilac);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .workspace-card:hover {
+      opacity: 0.9;
+    }
+
+    .workspace-card-avatar {
+      width: 32px;
+      height: 32px;
+      background: var(--black);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: var(--text-sm);
+      font-weight: 600;
+      color: var(--white);
+    }
+
+    .workspace-card-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .workspace-card-name {
+      font-size: var(--text-sm);
+      font-weight: 540;
+    }
+
+    .workspace-card-meta {
+      font-size: 10px;
+      font-weight: 330;
+      opacity: 0.6;
+    }
+
+    .workspace-card-arrow {
+      font-size: var(--text-sm);
+      opacity: 0.5;
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: var(--space-sm) var(--space-xs);
+      overflow-y: auto;
+    }
+
+    .nav-section {
+      margin-bottom: var(--space-xs);
+    }
+
+    .nav-section-title {
+      font-size: var(--text-xs);
+      font-weight: 400;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink);
+      opacity: 0.35;
+      padding: 6px var(--space-xs);
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px var(--space-xs);
+      border-radius: var(--radius-sm);
+      color: var(--ink);
+      font-size: var(--text-sm);
+      font-weight: 330;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .nav-item:hover {
+      background: var(--surface-soft);
+    }
+
+    .nav-item.active {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .nav-item svg {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      opacity: 0.7;
+    }
+
+    .nav-item.active svg {
+      opacity: 1;
+    }
+
+    .nav-item .badge {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 2px 5px;
+      border-radius: var(--radius-pill);
+      background: var(--surface-soft);
+      opacity: 0.5;
+    }
+
+    .nav-item.active .badge {
+      background: rgba(255,255,255,0.2);
+      opacity: 1;
+    }
+
+    /* Main */
+    .main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      height: 48px;
+      background: var(--canvas);
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+      padding: 0 var(--space-md);
+      gap: var(--space-sm);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      transition: background 0.2s, border-color 0.2s;
+    }
+
+    .header-logo {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-logo-mark {
+      width: 26px;
+      height: 26px;
+      background: var(--black);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .header-logo-mark svg {
+      width: 14px;
+      height: 14px;
+      color: var(--white);
+    }
+
+    .header-logo-text {
+      font-size: var(--text-sm);
+      font-weight: 700;
+    }
+
+    .header-divider {
+      width: 1px;
+      height: 20px;
+      background: var(--hairline);
+    }
+
+    .search {
+      flex: 1;
+      max-width: 320px;
+      position: relative;
+    }
+
+    .search input {
+      width: 100%;
+      padding: 6px 10px 6px 30px;
+      font-family: var(--font-sans);
+      font-size: var(--text-xs);
+      font-weight: 330;
+      color: var(--ink);
+      background: var(--surface-soft);
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      outline: none;
+      transition: all 0.15s;
+    }
+
+    .search input::placeholder {
+      opacity: 0.4;
+    }
+
+    .search input:focus {
+      border-color: var(--black);
+    }
+
+    .search svg {
+      position: absolute;
+      left: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 12px;
+      height: 12px;
+      opacity: 0.4;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: auto;
+    }
+
+    .icon-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-full);
+      border: none;
+      background: transparent;
+      color: var(--ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.15s;
+      opacity: 0.5;
+    }
+
+    .icon-btn:hover {
+      background: var(--surface-soft);
+      opacity: 1;
+    }
+
+    .icon-btn svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .user-avatar {
+      width: 26px;
+      height: 26px;
+      border-radius: var(--radius-sm);
+      background: var(--black);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 600;
+      color: var(--white);
+      cursor: pointer;
+    }
+
+    /* Content Area */
+    .content-area {
+      flex: 1;
+      display: flex;
+      overflow: hidden;
+    }
+
+    /* Doc Sidebar (left) */
+    .doc-sidebar {
+      width: 280px;
+      background: var(--canvas);
+      border-right: 1px solid var(--hairline);
+      display: flex;
+      flex-direction: column;
+      flex-shrink: 0;
+      overflow-y: auto;
+    }
+
+    .doc-sidebar-header {
+      padding: var(--space-sm);
+      border-bottom: 1px solid var(--hairline);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .doc-sidebar-title {
+      font-size: var(--text-sm);
+      font-weight: 540;
+    }
+
+    .doc-nav {
+      flex: 1;
+      padding: var(--space-xs);
+    }
+
+    .doc-nav-section {
+      margin-bottom: var(--space-sm);
+    }
+
+    .doc-nav-section-title {
+      font-size: 10px;
+      font-weight: 400;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--ink);
+      opacity: 0.35;
+      padding: 4px var(--space-xs);
+      margin-bottom: 2px;
+    }
+
+    .doc-nav-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px var(--space-xs);
+      border-radius: var(--radius-sm);
+      color: var(--ink);
+      font-size: var(--text-xs);
+      font-weight: 330;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .doc-nav-item:hover {
+      background: var(--surface-soft);
+    }
+
+    .doc-nav-item.active {
+      background: var(--block-lime);
+      font-weight: 450;
+    }
+
+    .doc-nav-item svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0.5;
+      flex-shrink: 0;
+    }
+
+    .doc-nav-item.active svg {
+      opacity: 0.7;
+    }
+
+    .doc-nav-item .count {
+      margin-left: auto;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      opacity: 0.4;
+    }
+
+    /* Main Doc Content */
+    .doc-main {
+      flex: 1;
+      overflow-y: auto;
+      padding: var(--space-lg);
+    }
+
+    .doc-header {
+      margin-bottom: var(--space-lg);
+    }
+
+    .doc-breadcrumb {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: var(--text-xs);
+      opacity: 0.5;
+      margin-bottom: var(--space-xs);
+    }
+
+    .doc-breadcrumb span {
+      cursor: pointer;
+    }
+
+    .doc-breadcrumb span:hover {
+      opacity: 1;
+    }
+
+    .doc-title {
+      font-size: 20px;
+      font-weight: 540;
+      margin-bottom: 4px;
+    }
+
+    .doc-subtitle {
+      font-size: var(--text-xs);
+      font-weight: 330;
+      opacity: 0.5;
+    }
+
+    /* Auto-generated Banner */
+    .auto-gen-banner {
+      background: var(--block-lime);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      margin-bottom: var(--space-lg);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .auto-gen-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(0,0,0,0.08);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auto-gen-icon svg {
+      width: 20px;
+      height: 20px;
+      opacity: 0.6;
+    }
+
+    .auto-gen-info {
+      flex: 1;
+    }
+
+    .auto-gen-title {
+      font-size: var(--text-sm);
+      font-weight: 540;
+      margin-bottom: 2px;
+    }
+
+    .auto-gen-desc {
+      font-size: var(--text-xs);
+      font-weight: 330;
+      opacity: 0.6;
+    }
+
+    .auto-gen-actions {
+      display: flex;
+      gap: var(--space-xs);
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 12px;
+      font-family: var(--font-sans);
+      font-size: var(--text-xs);
+      font-weight: 480;
+      border-radius: var(--radius-pill);
+      cursor: pointer;
+      transition: all 0.15s;
+      border: none;
+    }
+
+    .btn svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    .btn-primary {
+      background: var(--black);
+      color: var(--white);
+    }
+
+    .btn-primary:hover {
+      opacity: 0.9;
+    }
+
+    .btn-secondary {
+      background: rgba(0,0,0,0.06);
+      color: var(--ink);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(0,0,0,0.1);
+    }
+
+    /* Endpoint Card */
+    .endpoint-card {
+      background: var(--canvas);
+      border: 1px solid var(--hairline);
+      border-radius: var(--radius-lg);
+      margin-bottom: var(--space-md);
+      overflow: hidden;
+      transition: all 0.2s;
+    }
+
+    .endpoint-card:hover {
+      border-color: var(--ink);
+    }
+
+    .endpoint-header {
+      padding: var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      cursor: pointer;
+      transition: background 0.15s;
+    }
+
+    .endpoint-header:hover {
+      background: var(--surface-soft);
+    }
+
+    .method {
+      font-size: 10px;
+      font-weight: 600;
+      font-family: var(--font-mono);
+      padding: 4px 8px;
+      border-radius: var(--radius-sm);
+      min-width: 52px;
+      text-align: center;
+    }
+
+    .method.get { background: var(--success-bg); color: var(--success); }
+    .method.post { background: var(--warning-bg); color: var(--warning); }
+    .method.put { background: var(--info-bg); color: var(--info); }
+    .method.delete { background: var(--danger-bg); color: var(--danger); }
+    .method.patch { background: #ede9fe; color: #7c3aed; }
+
+    .endpoint-path {
+      font-family: var(--font-mono);
+      font-size: var(--text-sm);
+      font-weight: 400;
+      flex: 1;
+    }
+
+    .endpoint-meta {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .endpoint-tag {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      background: var(--block-lilac);
+      opacity: 0.7;
+    }
+
+    .endpoint-status {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+    }
+
+    .endpoint-status.covered {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .endpoint-status.missing {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .endpoint-expand {
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.4;
+      transition: transform 0.2s;
+    }
+
+    .endpoint-expand.expanded {
+      transform: rotate(180deg);
+    }
+
+    .endpoint-expand svg {
+      width: 12px;
+      height: 12px;
+    }
+
+    /* Endpoint Body */
+    .endpoint-body {
+      border-top: 1px solid var(--hairline);
+      padding: var(--space-md);
+      display: none;
+    }
+
+    .endpoint-body.show {
+      display: block;
+    }
+
+    .doc-section {
+      margin-bottom: var(--space-md);
+    }
+
+    .doc-section:last-child {
+      margin-bottom: 0;
+    }
+
+    .doc-section-title {
+      font-size: var(--text-xs);
+      font-weight: 540;
+      margin-bottom: var(--space-xs);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .doc-section-title svg {
+      width: 12px;
+      height: 12px;
+      opacity: 0.5;
+    }
+
+    /* Parameters Table */
+    .params-table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .params-table th {
+      text-align: left;
+      font-size: 10px;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.4;
+      padding: 6px 8px;
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .params-table td {
+      padding: 8px;
+      border-bottom: 1px solid var(--hairline-soft);
+      font-size: var(--text-xs);
+      vertical-align: top;
+    }
+
+    .params-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .param-name {
+      font-family: var(--font-mono);
+      font-weight: 500;
+      color: var(--info);
+    }
+
+    .param-type {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      opacity: 0.5;
+    }
+
+    .param-required {
+      font-size: 9px;
+      font-family: var(--font-mono);
+      padding: 2px 4px;
+      border-radius: 3px;
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .param-optional {
+      font-size: 9px;
+      font-family: var(--font-mono);
+      padding: 2px 4px;
+      border-radius: 3px;
+      background: var(--surface-soft);
+      opacity: 0.6;
+    }
+
+    .param-desc {
+      opacity: 0.6;
+      line-height: 1.4;
+    }
+
+    /* Request/Response Preview */
+    .code-preview {
+      background: var(--surface-soft);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+    }
+
+    .code-preview-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 6px var(--space-sm);
+      border-bottom: 1px solid var(--hairline);
+    }
+
+    .code-preview-title {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      opacity: 0.4;
+    }
+
+    .code-preview-copy {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      color: var(--ink);
+      opacity: 0.4;
+      cursor: pointer;
+    }
+
+    .code-preview-copy:hover {
+      opacity: 1;
+    }
+
+    .code-preview-body {
+      padding: var(--space-sm);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      line-height: 1.6;
+      overflow-x: auto;
+      white-space: pre;
+    }
+
+    .code-key { color: #7c3aed; }
+    .code-string { color: var(--success); }
+    .code-number { color: var(--warning); }
+    .code-boolean { color: var(--info); }
+    .code-null { color: #6b7280; }
+
+    /* Stats Bar */
+    .stats-bar {
+      display: flex;
+      gap: var(--space-md);
+      margin-bottom: var(--space-lg);
+      flex-wrap: wrap;
+    }
+
+    .stat-item {
+      background: var(--surface-soft);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .stat-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .stat-icon svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .stat-icon.green {
+      background: var(--success-bg);
+      color: var(--success);
+    }
+
+    .stat-icon.blue {
+      background: var(--info-bg);
+      color: var(--info);
+    }
+
+    .stat-icon.yellow {
+      background: var(--warning-bg);
+      color: var(--warning);
+    }
+
+    .stat-icon.red {
+      background: var(--danger-bg);
+      color: var(--danger);
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .stat-value {
+      font-size: var(--text-sm);
+      font-weight: 540;
+      line-height: 1.2;
+    }
+
+    .stat-label {
+      font-size: 10px;
+      font-weight: 330;
+      opacity: 0.5;
+    }
+
+    /* Coverage Progress */
+    .coverage-bar {
+      margin-bottom: var(--space-lg);
+    }
+
+    .coverage-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: var(--space-xs);
+    }
+
+    .coverage-title {
+      font-size: var(--text-xs);
+      font-weight: 540;
+    }
+
+    .coverage-value {
+      font-size: var(--text-xs);
+      font-weight: 540;
+      font-family: var(--font-mono);
+    }
+
+    .coverage-track {
+      height: 6px;
+      background: var(--surface-soft);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .coverage-fill {
+      height: 100%;
+      background: var(--success);
+      border-radius: var(--radius-full);
+      transition: width 0.3s;
+    }
+
+    /* AI Suggestions */
+    .ai-suggestions {
+      background: var(--block-coral);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      margin-bottom: var(--space-lg);
+    }
+
+    .ai-suggestions-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-sm);
+    }
+
+    .ai-badge {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      font-weight: 500;
+      padding: 2px 6px;
+      background: rgba(0,0,0,0.08);
+      border-radius: var(--radius-sm);
+    }
+
+    .ai-suggestions-title {
+      font-size: var(--text-sm);
+      font-weight: 540;
+    }
+
+    .suggestion-item {
+      display: flex;
+      align-items: flex-start;
+      gap: var(--space-sm);
+      padding: var(--space-sm);
+      background: rgba(255,255,255,0.5);
+      border-radius: var(--radius-md);
+      margin-bottom: var(--space-xs);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .suggestion-item:last-child {
+      margin-bottom: 0;
+    }
+
+    .suggestion-item:hover {
+      background: rgba(255,255,255,0.8);
+      transform: translateX(2px);
+    }
+
+    .suggestion-icon {
+      width: 20px;
+      height: 20px;
+      background: rgba(0,0,0,0.06);
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .suggestion-icon svg {
+      width: 10px;
+      height: 10px;
+      opacity: 0.6;
+    }
+
+    .suggestion-text {
+      font-size: var(--text-xs);
+      font-weight: 330;
+      line-height: 1.4;
+    }
+
+    .suggestion-text strong {
+      font-weight: 540;
+    }
+
+    /* Version Selector */
+    .version-selector {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .version-badge {
+      font-size: 10px;
+      font-family: var(--font-mono);
+      padding: 4px 8px;
+      background: var(--block-lilac);
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .version-badge:hover {
+      opacity: 0.8;
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      cursor: pointer;
+    }
+
+    /* Responsive */
+    @media (max-width: 1024px) {
+      .doc-sidebar {
+        width: 220px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+
+      .doc-sidebar {
+        display: none;
+      }
+
+      .doc-main {
+        padding: var(--space-md);
+      }
+
+      .auto-gen-banner {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .auto-gen-actions {
+        margin-top: var(--space-sm);
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-header">
+        <div class="workspace-card">
+          <div class="workspace-card-avatar">AC</div>
+          <div class="workspace-card-info">
+            <div class="workspace-card-name">Acme Corp</div>
+            <div class="workspace-card-meta">8 members · Admin</div>
+          </div>
+          <div class="workspace-card-arrow">›</div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section">
+          <div class="nav-section-title">Menu</div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/>
+            </svg>
+            Dashboard
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+            </svg>
+            Search
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Workspace</div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            API Builder
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/>
+            </svg>
+            Collections
+            <span class="badge">12</span>
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"/>
+            </svg>
+            Environments
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Testing</div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4"/>
+            </svg>
+            Test Suites
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+            </svg>
+            Flows
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Documentation</div>
+          <div class="nav-item active">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+            Smart Docs
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+            Mock Servers
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+            </svg>
+            API Design
+          </div>
+        </div>
+
+        <div class="nav-section">
+          <div class="nav-section-title">Analytics</div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"/>
+            </svg>
+            Reports
+          </div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+            Performance
+          </div>
+        </div>
+
+        <div class="nav-section" style="margin-top: auto;">
+          <div class="nav-section-title">Account</div>
+          <div class="nav-item">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            Settings
+          </div>
+        </div>
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main">
+      <!-- Header -->
+      <header class="header">
+        <div class="header-logo">
+          <div class="header-logo-mark">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 9l3 3-3 3m5 0h3M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+            </svg>
+          </div>
+          <span class="header-logo-text">API Forge</span>
+        </div>
+
+        <div class="header-divider"></div>
+
+        <div class="search">
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+          </svg>
+          <input type="text" placeholder="Search endpoints, params, docs...">
+        </div>
+
+        <div class="version-selector">
+          <span class="version-badge">v2.1</span>
+          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:12px;height:12px;opacity:0.4">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+          </svg>
+        </div>
+
+        <div class="header-actions">
+          <button class="icon-btn theme-toggle" onclick="toggleTheme()" title="Toggle theme">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+            </svg>
+          </button>
+          <button class="icon-btn" title="Share">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>
+            </svg>
+          </button>
+          <button class="icon-btn" title="Export">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+            </svg>
+          </button>
+          <div class="user-avatar">DH</div>
+        </div>
+      </header>
+
+      <!-- Content Area -->
+      <div class="content-area">
+        <!-- Doc Sidebar -->
+        <aside class="doc-sidebar">
+          <div class="doc-sidebar-header">
+            <span class="doc-sidebar-title">Documentation</span>
+            <button class="btn btn-secondary" style="padding: 4px 8px; font-size: 10px;">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" style="width:10px;height:10px">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              New
+            </button>
+          </div>
+
+          <nav class="doc-nav">
+            <div class="doc-nav-section">
+              <div class="doc-nav-section-title">Getting Started</div>
+              <div class="doc-nav-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+                Introduction
+              </div>
+              <div class="doc-nav-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/>
+                </svg>
+                Authentication
+              </div>
+              <div class="doc-nav-item active">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                </svg>
+                API Reference
+                <span class="count">24</span>
+              </div>
+            </div>
+
+            <div class="doc-nav-section">
+              <div class="doc-nav-section-title">Resources</div>
+              <div class="doc-nav-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                </svg>
+                Users
+                <span class="count">8</span>
+              </div>
+              <div class="doc-nav-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/>
+                </svg>
+                Orders
+                <span class="count">156</span>
+              </div>
+              <div class="doc-nav-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                </svg>
+                Products
+                <span class="count">89</span>
+              </div>
+            </div>
+
+            <div class="doc-nav-section">
+              <div class="doc-nav-section-title">Webhooks</div>
+              <div class="doc-nav-item">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/>
+                </svg>
+                Events
+                <span class="count">12</span>
+              </div>
+            </div>
+          </nav>
+        </aside>
+
+        <!-- Main Doc Content -->
+        <div class="doc-main">
+          <!-- Doc Header -->
+          <div class="doc-header">
+            <div class="doc-breadcrumb">
+              <span>Documentation</span>
+              <span>›</span>
+              <span>API Reference</span>
+              <span>›</span>
+              <span>Users</span>
+            </div>
+            <h1 class="doc-title">Users API</h1>
+            <p class="doc-subtitle">Manage user accounts, profiles, and permissions</p>
+          </div>
+
+          <!-- Stats Bar -->
+          <div class="stats-bar">
+            <div class="stat-item">
+              <div class="stat-icon green">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">18/24</span>
+                <span class="stat-label">Endpoints documented</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon blue">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">75%</span>
+                <span class="stat-label">Coverage</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon yellow">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">2h ago</span>
+                <span class="stat-label">Last updated</span>
+              </div>
+            </div>
+            <div class="stat-item">
+              <div class="stat-icon red">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+              </div>
+              <div class="stat-info">
+                <span class="stat-value">6</span>
+                <span class="stat-label">Missing descriptions</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Coverage Progress -->
+          <div class="coverage-bar">
+            <div class="coverage-header">
+              <span class="coverage-title">Documentation Coverage</span>
+              <span class="coverage-value">75%</span>
+            </div>
+            <div class="coverage-track">
+              <div class="coverage-fill" style="width: 75%"></div>
+            </div>
+          </div>
+
+          <!-- Auto-generated Banner -->
+          <div class="auto-gen-banner">
+            <div class="auto-gen-icon">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.663 17h4.673M12 3v1m6.364 1.636l-.707.707M21 12h-1M4 12H3m3.343-5.657l-.707-.707m2.828 9.9a5 5 0 117.072 0l-.548.547A3.374 3.374 0 0014 18.469V19a2 2 0 11-4 0v-.531c0-.895-.356-1.754-.988-2.386l-.548-.547z"/>
+              </svg>
+            </div>
+            <div class="auto-gen-info">
+              <div class="auto-gen-title">AI-Powered Documentation</div>
+              <div class="auto-gen-desc">Automatically generated from your API schema. Edit descriptions to customize.</div>
+            </div>
+            <div class="auto-gen-actions">
+              <button class="btn btn-primary">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                </svg>
+                Regenerate
+              </button>
+              <button class="btn btn-secondary">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                </svg>
+                Settings
+              </button>
+            </div>
+          </div>
+
+          <!-- AI Suggestions -->
+          <div class="ai-suggestions">
+            <div class="ai-suggestions-header">
+              <span class="ai-badge">AI</span>
+              <span class="ai-suggestions-title">Improvement Suggestions</span>
+            </div>
+            <div class="suggestion-item">
+              <div class="suggestion-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                </svg>
+              </div>
+              <div class="suggestion-text">
+                <strong>Missing description</strong> for <code>POST /users/{id}/avatar</code> — Add parameter descriptions to improve developer experience.
+              </div>
+            </div>
+            <div class="suggestion-item">
+              <div class="suggestion-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                </svg>
+              </div>
+              <div class="suggestion-text">
+                <strong>Add example response</strong> for <code>GET /users/search</code> — Include realistic data examples for better documentation.
+              </div>
+            </div>
+            <div class="suggestion-item">
+              <div class="suggestion-icon">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/>
+                </svg>
+              </div>
+              <div class="suggestion-text">
+                <strong>Link related endpoints</strong> — Connect <code>GET /users</code> with <code>POST /users</code> for better navigation.
+              </div>
+            </div>
+          </div>
+
+          <!-- Endpoint Cards -->
+          <div class="endpoint-card">
+            <div class="endpoint-header" onclick="toggleEndpoint(this)">
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/users</span>
+              <div class="endpoint-meta">
+                <span class="endpoint-tag">list</span>
+                <span class="endpoint-status covered">Documented</span>
+              </div>
+              <div class="endpoint-expand">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </div>
+            <div class="endpoint-body show">
+              <div class="doc-section">
+                <div class="doc-section-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                  </svg>
+                  Query Parameters
+                </div>
+                <table class="params-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="param-name">page</span></td>
+                      <td><span class="param-type">integer</span></td>
+                      <td><span class="param-optional">optional</span></td>
+                      <td class="param-desc">Page number for pagination (default: 1)</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">limit</span></td>
+                      <td><span class="param-type">integer</span></td>
+                      <td><span class="param-optional">optional</span></td>
+                      <td class="param-desc">Number of items per page (default: 20, max: 100)</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">search</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td><span class="param-optional">optional</span></td>
+                      <td class="param-desc">Search by name or email</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">status</span></td>
+                      <td><span class="param-type">enum</span></td>
+                      <td><span class="param-optional">optional</span></td>
+                      <td class="param-desc">Filter by status: active, inactive, pending</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="doc-section">
+                <div class="doc-section-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                  </svg>
+                  Response Example
+                </div>
+                <div class="code-preview">
+                  <div class="code-preview-header">
+                    <span class="code-preview-title">200 OK</span>
+                    <span class="code-preview-copy">Copy</span>
+                  </div>
+                  <div class="code-preview-body"><span class="code-string">{
+  <span class="code-key">"data"</span>: [
+    {
+      <span class="code-key">"id"</span>: <span class="code-string">"usr_1a2b3c"</span>,
+      <span class="code-key">"name"</span>: <span class="code-string">"Sarah Chen"</span>,
+      <span class="code-key">"email"</span>: <span class="code-string">"sarah@acme.com"</span>,
+      <span class="code-key">"role"</span>: <span class="code-string">"admin"</span>,
+      <span class="code-key">"status"</span>: <span class="code-string">"active"</span>,
+      <span class="code-key">"createdAt"</span>: <span class="code-string">"2024-01-15T09:30:00Z"</span>
+    }
+  ],
+  <span class="code-key">"meta"</span>: {
+    <span class="code-key">"page"</span>: <span class="code-number">1</span>,
+    <span class="code-key">"limit"</span>: <span class="code-number">20</span>,
+    <span class="code-key">"total"</span>: <span class="code-number">156</span>
+  }
+}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint-card">
+            <div class="endpoint-header" onclick="toggleEndpoint(this)">
+              <span class="method post">POST</span>
+              <span class="endpoint-path">/users</span>
+              <div class="endpoint-meta">
+                <span class="endpoint-tag">create</span>
+                <span class="endpoint-status covered">Documented</span>
+              </div>
+              <div class="endpoint-expand">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </div>
+            <div class="endpoint-body">
+              <div class="doc-section">
+                <div class="doc-section-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                  </svg>
+                  Request Body
+                </div>
+                <table class="params-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="param-name">name</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td><span class="param-required">required</span></td>
+                      <td class="param-desc">Full name of the user</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">email</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td><span class="param-required">required</span></td>
+                      <td class="param-desc">Unique email address</td>
+                    </tr>
+                    <tr>
+                      <td><span class="param-name">role</span></td>
+                      <td><span class="param-type">enum</span></td>
+                      <td><span class="param-optional">optional</span></td>
+                      <td class="param-desc">User role: admin, member, viewer (default: member)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="doc-section">
+                <div class="doc-section-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                  </svg>
+                  Response Example
+                </div>
+                <div class="code-preview">
+                  <div class="code-preview-header">
+                    <span class="code-preview-title">201 Created</span>
+                    <span class="code-preview-copy">Copy</span>
+                  </div>
+                  <div class="code-preview-body"><span class="code-string">{
+  <span class="code-key">"id"</span>: <span class="code-string">"usr_7x8y9z"</span>,
+  <span class="code-key">"name"</span>: <span class="code-string">"New User"</span>,
+  <span class="code-key">"email"</span>: <span class="code-string">"newuser@acme.com"</span>,
+  <span class="code-key">"role"</span>: <span class="code-string">"member"</span>,
+  <span class="code-key">"status"</span>: <span class="code-string">"pending"</span>,
+  <span class="code-key">"createdAt"</span>: <span class="code-string">"2024-08-16T10:00:00Z"</span>
+}</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint-card">
+            <div class="endpoint-header" onclick="toggleEndpoint(this)">
+              <span class="method get">GET</span>
+              <span class="endpoint-path">/users/{id}</span>
+              <div class="endpoint-meta">
+                <span class="endpoint-tag">retrieve</span>
+                <span class="endpoint-status covered">Documented</span>
+              </div>
+              <div class="endpoint-expand">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </div>
+            <div class="endpoint-body">
+              <div class="doc-section">
+                <div class="doc-section-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                  </svg>
+                  Path Parameters
+                </div>
+                <table class="params-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="param-name">id</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td><span class="param-required">required</span></td>
+                      <td class="param-desc">Unique user identifier (prefix: usr_)</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint-card">
+            <div class="endpoint-header" onclick="toggleEndpoint(this)">
+              <span class="method put">PUT</span>
+              <span class="endpoint-path">/users/{id}</span>
+              <div class="endpoint-meta">
+                <span class="endpoint-tag">update</span>
+                <span class="endpoint-status missing">Missing</span>
+              </div>
+              <div class="endpoint-expand">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </div>
+            <div class="endpoint-body">
+              <div class="doc-section">
+                <div class="doc-section-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                  </svg>
+                  Documentation Needed
+                </div>
+                <p style="font-size: var(--text-xs); opacity: 0.5;">
+                  This endpoint is missing documentation. Click "Regenerate" to auto-generate or add manually.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div class="endpoint-card">
+            <div class="endpoint-header" onclick="toggleEndpoint(this)">
+              <span class="method delete">DELETE</span>
+              <span class="endpoint-path">/users/{id}</span>
+              <div class="endpoint-meta">
+                <span class="endpoint-tag">delete</span>
+                <span class="endpoint-status covered">Documented</span>
+              </div>
+              <div class="endpoint-expand">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
+                </svg>
+              </div>
+            </div>
+            <div class="endpoint-body">
+              <div class="doc-section">
+                <div class="doc-section-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z"/>
+                  </svg>
+                  Path Parameters
+                </div>
+                <table class="params-table">
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Type</th>
+                      <th>Required</th>
+                      <th>Description</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td><span class="param-name">id</span></td>
+                      <td><span class="param-type">string</span></td>
+                      <td><span class="param-required">required</span></td>
+                      <td class="param-desc">Unique user identifier</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+
+              <div class="doc-section">
+                <div class="doc-section-title">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"/>
+                  </svg>
+                  Response
+                </div>
+                <div class="code-preview">
+                  <div class="code-preview-header">
+                    <span class="code-preview-title">204 No Content</span>
+                    <span class="code-preview-copy">Copy</span>
+                  </div>
+                  <div class="code-preview-body" style="opacity: 0.4;">// Empty response body</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    function toggleEndpoint(header) {
+      const body = header.nextElementSibling;
+      const expand = header.querySelector('.endpoint-expand');
+      body.classList.toggle('show');
+      expand.classList.toggle('expanded');
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      if (html.getAttribute('data-theme') === 'dark') {
+        html.removeAttribute('data-theme');
+      } else {
+        html.setAttribute('data-theme', 'dark');
+      }
+    }
+  </script>
+</body>
+</html>
