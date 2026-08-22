@@ -10,6 +10,18 @@
 
 ---
 
+## 0. common column
+
+Authentication and user profile.
+
+| Column | Type | Description |
+|--------|------|-------------|
+| `created_by` | BIGINT | User who created this record |
+| `created_at` | TIMESTAMPTZ | Timestamp when record is created |
+| `updated_at` | TIMESTAMPTZ | Timestamp when record is updated |
+| `deleted_at` | TIMESTAMPTZ | Timestamp when record is deleted |
+---
+
 ## 1. user
 
 Authentication and user profile.
@@ -24,9 +36,6 @@ Authentication and user profile.
 | `photo_url` | TEXT | URL to avatar image |
 | `status` | VARCHAR(20) | Account status: `active`, `inactive`, `suspended` |
 | `provider` | VARCHAR(50) | OAuth provider: `google`, `github`, `null` for password auth |
-| `created_at` | TIMESTAMPTZ | Account creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last profile update timestamp |
-| `deleted_at` | TIMESTAMPTZ | Soft delete timestamp (nullable, null = active) |
 
 **Constraints:**
 - `UNIQUE(email)`
@@ -49,7 +58,6 @@ Refresh token management. Each session represents one login from one device.
 | `user_agent` | TEXT | Browser/app user agent string |
 | `expires_at` | TIMESTAMPTZ | When this session token expires |
 | `revoked_at` | TIMESTAMPTZ | When token was revoked (nullable; non-null = revoked) |
-| `created_at` | TIMESTAMPTZ | Session creation timestamp |
 | `last_active_at` | TIMESTAMPTZ | Last time this session was used to refresh |
 
 **Constraints:**
@@ -70,9 +78,6 @@ A collaborative workspace containing collections, requests, environments, and fl
 | `icon` | TEXT | Icon image URL or emoji |
 | `owner_id` | BIGINT | FK → `user.id` (workspace creator/admin) |
 | `is_default` | BOOLEAN | True if this is the user's default workspace on creation |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
-| `deleted_at` | TIMESTAMPTZ | Soft delete timestamp |
 
 **Constraints:**
 - `UNIQUE(slug)`
@@ -91,8 +96,6 @@ Membership of users within workspaces.
 | `user_id` | BIGINT | FK → `user.id` |
 | `role` | VARCHAR(20) | Role: `owner`, `admin`, `member`, `viewer` |
 | `joined_at` | TIMESTAMPTZ | When user accepted the invitation |
-| `created_at` | TIMESTAMPTZ | Record creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
 
 **Constraints:**
 - `UNIQUE(workspace_id, user_id)` — one user cannot join same workspace twice
@@ -117,8 +120,6 @@ Outstanding or historical workspace invitations.
 | `status` | VARCHAR(20) | Status: `pending`, `accepted`, `declined`, `expired`, `cancelled` |
 | `expires_at` | TIMESTAMPTZ | Invitation expiration timestamp |
 | `message` | TEXT | Optional personal message from inviter |
-| `created_at` | TIMESTAMPTZ | Invitation creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
 
 **Constraints:**
 - `UNIQUE(token)`
@@ -141,9 +142,6 @@ Hierarchical folder for organizing API requests. Supports nested folders via `pa
 | `description` | TEXT | Optional description |
 | `sequence` | INTEGER | Sort order within the same parent |
 | `is_public` | BOOLEAN | True = visible to all workspace members |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
-| `deleted_at` | TIMESTAMPTZ | Soft delete timestamp |
 
 **Constraints:**
 - `FK(workspace_id) → workspace(id)` ON DELETE CASCADE
@@ -172,9 +170,6 @@ A single HTTP request definition stored within a collection.
 | `pre_request_script` | TEXT | JavaScript executed before the request |
 | `test_script` | TEXT | JavaScript assertions executed after the response |
 | `sequence` | INTEGER | Sort order within the collection |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
-| `deleted_at` | TIMESTAMPTZ | Soft delete timestamp |
 
 **Constraints:**
 - `FK(workspace_id) → workspace(id)` ON DELETE CASCADE
@@ -206,7 +201,6 @@ Immutable log of every request execution.
 | `response_snapshot` | JSONB | Snapshot of the response payload |
 | `error_message` | TEXT | Error message if the request failed (nullable) |
 | `executed_at` | TIMESTAMPTZ | When the request was executed |
-| `created_at` | TIMESTAMPTZ | Record creation timestamp |
 
 **Constraints:**
 - `FK(workspace_id) → workspace(id)` ON DELETE CASCADE
@@ -229,12 +223,8 @@ A named environment containing variables (e.g. Development, Staging, Production)
 |--------|------|-------------|
 | `id` | BIGSERIAL | Primary key |
 | `workspace_id` | BIGINT | FK → `workspace.id` |
-| `owner_id` | BIGINT | FK → `user.id` (creator) |
 | `name` | VARCHAR(255) | Environment name (e.g. "Production") |
 | `is_default` | BOOLEAN | True if this is the default environment for the workspace |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
-| `deleted_at` | TIMESTAMPTZ | Soft delete timestamp |
 
 **Constraints:**
 - `FK(workspace_id) → workspace(id)` ON DELETE CASCADE
@@ -254,8 +244,6 @@ Individual key-value variables scoped to an environment.
 | `key` | VARCHAR(255) | Variable name (e.g. `BASE_URL`) |
 | `value` | TEXT | Variable value. Encrypted at rest if `is_secret = true` |
 | `is_secret` | BOOLEAN | True = sensitive value (password, API key), should be masked in UI |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
 
 **Constraints:**
 - `FK(environment_id) → environment(id)` ON DELETE CASCADE
@@ -276,8 +264,6 @@ An automated multi-step workflow (similar to Postman Flows or Zapier).
 | `description` | TEXT | Optional description |
 | `status` | VARCHAR(20) | Status: `draft`, `published`, `archived` |
 | `last_executed_at` | TIMESTAMPTZ | Last time the flow was run (nullable) |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
 
 **Constraints:**
 - `FK(workspace_id) → workspace(id)` ON DELETE CASCADE
@@ -300,10 +286,6 @@ A single step within a flow. Each node represents an action (API request, delay,
 | `config` | JSONB | Node-specific configuration (depends on node_type) |
 | `position_x` | INTEGER | X coordinate on the canvas |
 | `position_y` | INTEGER | Y coordinate on the canvas |
-| `created_by` | BIGINT | FK → `user.id` |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
-| `deleted_at` | TIMESTAMPTZ | Soft delete timestamp |
 
 **Constraints:**
 - `FK(flow_id) → flow(id)` ON DELETE CASCADE
@@ -325,8 +307,6 @@ Directed edge connecting two nodes in a flow graph.
 | `target_node_id` | BIGINT | FK → `flow_node.id` (incoming node) |
 | `condition` | JSONB | Conditional expression (nullable, null = unconditional edge) |
 | `label` | VARCHAR(255) | Optional edge label (e.g. "On Success", "On Error") |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
 
 **Constraints:**
 - `FK(flow_id) → flow(id)` ON DELETE CASCADE
@@ -344,13 +324,9 @@ A group of test cases.
 |--------|------|-------------|
 | `id` | BIGSERIAL | Primary key |
 | `workspace_id` | BIGINT | FK → `workspace.id` |
-| `owner_id` | BIGINT | FK → `user.id` (creator) |
 | `name` | VARCHAR(255) | Suite name |
 | `description` | TEXT | Optional description |
 | `sequence` | INTEGER | Sort order within the workspace |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
-| `deleted_at` | TIMESTAMPTZ | Soft delete timestamp |
 
 **Constraints:**
 - `FK(workspace_id) → workspace(id)` ON DELETE CASCADE
@@ -365,9 +341,7 @@ A single test case within a test suite. Can target a request, a flow, or an enti
 | Column | Type | Description |
 |--------|------|-------------|
 | `id` | BIGSERIAL | Primary key |
-| `workspace_id` | BIGINT | FK → `workspace.id` |
 | `test_suite_id` | BIGINT | FK → `test_suite.id` (nullable) |
-| `created_by` | BIGINT | FK → `user.id` (who created this test case) |
 | `name` | VARCHAR(255) | Test case name |
 | `target_type` | VARCHAR(20) | What is being tested: `request`, `flow`, `collection` |
 | `target_id` | BIGINT | ID of the target resource (interpreted by target_type) |
@@ -375,9 +349,6 @@ A single test case within a test suite. Can target a request, a flow, or an enti
 | `status` | VARCHAR(20) | Status: `draft`, `published` |
 | `last_run_at` | TIMESTAMPTZ | Last execution timestamp (nullable) |
 | `last_run_result` | VARCHAR(20) | Last result: `pass`, `fail`, `error` (nullable) |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
-| `deleted_at` | TIMESTAMPTZ | Soft delete timestamp |
 
 **Constraints:**
 - `FK(workspace_id) → workspace(id)` ON DELETE CASCADE
@@ -405,7 +376,6 @@ Immutable append-only log tracking all significant actions across the platform.
 | `new_value` | JSONB | Snapshot of entity after the change (nullable) |
 | `ip_address` | VARCHAR(45) | IP address of the actor |
 | `user_agent` | TEXT | User agent string of the actor |
-| `created_at` | TIMESTAMPTZ | When the action occurred |
 
 **Constraints:**
 - `FK(workspace_id) → workspace(id)` ON DELETE SET NULL
@@ -425,15 +395,12 @@ Smart auto-generated API documentation linked to individual requests.
 | Column | Type | Description |
 |--------|------|-------------|
 | `id` | BIGSERIAL | Primary key |
-| `workspace_id` | BIGINT | FK → `workspace.id` |
 | `api_request_id` | BIGINT | FK → `api_request.id` (one doc per request) |
 | `generated_content` | JSONB | Auto-generated documentation sections from schema/request |
 | `manual_edits` | JSONB | User-written overrides that survive regeneration |
 | `publish_status` | VARCHAR(20) | Status: `draft`, `published`, `archived` |
 | `ai_assisted` | BOOLEAN | True = some content was generated by AI |
 | `version` | INTEGER | Version number (auto-increment per request) |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
-| `updated_at` | TIMESTAMPTZ | Last update timestamp |
 
 **Constraints:**
 - `FK(workspace_id) → workspace(id)` ON DELETE CASCADE
@@ -451,14 +418,12 @@ Workspace-level API keys for external programmatic access.
 |--------|------|-------------|
 | `id` | BIGSERIAL | Primary key |
 | `workspace_id` | BIGINT | FK → `workspace.id` |
-| `owner_id` | BIGINT | FK → `user.id` (creator) |
 | `name` | VARCHAR(255) | Human-readable key name (e.g. "CI/CD Pipeline") |
 | `description` | TEXT | Optional description |
 | `key_hash` | VARCHAR(255) | SHA-256 hash of the API key (never store plain key) |
 | `expires_at` | TIMESTAMPTZ | Expiration timestamp (nullable = never expires) |
 | `last_used_at` | TIMESTAMPTZ | Last time this key was used (nullable) |
 | `revoked_at` | TIMESTAMPTZ | Revocation timestamp (nullable = active) |
-| `created_at` | TIMESTAMPTZ | Creation timestamp |
 
 **Constraints:**
 - `FK(workspace_id) → workspace(id)` ON DELETE CASCADE
